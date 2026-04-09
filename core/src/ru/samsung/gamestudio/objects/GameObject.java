@@ -1,8 +1,41 @@
 package ru.samsung.gamestudio.objects;
 
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.*;
 
+import static ru.samsung.gamestudio.GameSettings.SCALE;
+
 public class GameObject {
+
+    public Body body;
+    Texture texture;
+    public int width;
+    public int height;
+
+    GameObject(String texturePath, int width, int height,int x, int y, World world){
+        this.width = width;
+        this.height = height;
+
+        texture = new Texture(texturePath);
+        body = createBody(x, y, world);
+    }
+
+    public int getX() {
+        return (int) (body.getPosition().x / SCALE);
+    }
+
+    public int getY() {
+        return (int) (body.getPosition().y / SCALE);
+    }
+
+    public void setX(int x) {
+        body.setTransform(x * SCALE, body.getPosition().y, 0);
+    }
+
+    public void setY(int y) {
+        body.setTransform(body.getPosition().x, y * SCALE, 0);
+    }
     private Body createBody(float x, float y, World world) {
         BodyDef def = new BodyDef();
         def.type = BodyDef.BodyType.DynamicBody;
@@ -21,5 +54,19 @@ public class GameObject {
         circleShape.dispose();
         body.setTransform(x * SCALE, y * SCALE, 0);
         return body;
+
+
+
     }
+
+
+    public void draw(SpriteBatch batch) {
+        batch.draw(texture, getX() - (width / 2f), getY() - (height / 2f), width, height);
+    }
+
+    public void dispose(){
+        texture.dispose();
+
+    }
+
 }
