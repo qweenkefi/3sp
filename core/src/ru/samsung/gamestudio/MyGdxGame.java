@@ -16,7 +16,7 @@ import ru.samsung.gamestudio.screens.GameScreen;
 import static ru.samsung.gamestudio.GameSettings.*;
 
 public class MyGdxGame extends Game {
-	SpriteBatch batch;
+	public SpriteBatch batch;
 	public OrthographicCamera camera;
 	public GameScreen gamescreen;
 	public World world;
