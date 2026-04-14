@@ -8,6 +8,7 @@ import java.util.Random;
 
 public class TrashObject extends GameObject {
     private static final int paddingHorizontal = 30;
+
     public TrashObject(String texturePath, int width, int height, int x, int y, World world) {
         super(texturePath, width / 2 + paddingHorizontal + (new Random()).nextInt((GameSettings.SCREEN_WIDTH - 2 * paddingHorizontal - width)),
                 GameSettings.SCREEN_HEIGHT + height / 2,
@@ -15,9 +16,9 @@ public class TrashObject extends GameObject {
         body.setLinearVelocity(new Vector2(0, -GameSettings.TRASH_VELOCITY));
     }
 
-    }
-    public boolean isInFrame(){
-    return getY()+ height / 2>0;
+    public boolean isInFrame() {
+        return getY() + height / 2 > 0;
 
     }
+}
 

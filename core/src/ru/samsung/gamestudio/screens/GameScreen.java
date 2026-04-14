@@ -11,7 +11,9 @@ import ru.samsung.gamestudio.GameSession;
 import ru.samsung.gamestudio.GameSettings;
 import ru.samsung.gamestudio.MyGdxGame;
 import ru.samsung.gamestudio.objects.ShipObject;
+import ru.samsung.gamestudio.objects.TrashObject;
 
+import java.util.ArrayList;
 import java.util.Vector;
 
 import static com.badlogic.gdx.scenes.scene2d.utils.TiledDrawable.draw;
