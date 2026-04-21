@@ -5,11 +5,13 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.utils.ScreenUtils;
 import ru.samsung.gamestudio.GameResources;
 import ru.samsung.gamestudio.GameSession;
 import ru.samsung.gamestudio.GameSettings;
 import ru.samsung.gamestudio.MyGdxGame;
+import ru.samsung.gamestudio.objects.BulletObject;
 import ru.samsung.gamestudio.objects.ShipObject;
 import ru.samsung.gamestudio.objects.TrashObject;
 
@@ -20,6 +22,7 @@ import static com.badlogic.gdx.scenes.scene2d.utils.TiledDrawable.draw;
 
 public class GameScreen extends ScreenAdapter {
     ArrayList<TrashObject> trashArray;
+    ArrayList<BulletObject> bulletArray;
 
 
     MyGdxGame myGdxGame;
@@ -30,6 +33,7 @@ public class GameScreen extends ScreenAdapter {
         this.myGdxGame = myGdxGame;
         gameSession = new GameSession();
         trashArray = new ArrayList<>();
+        bulletArray = new ArrayList<>();
 
         shipObject = new ShipObject(
                 GameSettings.SCREEN_WIDTH/ 2, 150,
@@ -51,14 +55,25 @@ public class GameScreen extends ScreenAdapter {
             myGdxGame.stepWorld();
             handleInput();
 
-        if(gameSession.shouldSpawnTrash()){
+        if (gameSession.shouldSpawnTrash()) {
             TrashObject trashObject = new TrashObject(
-                    GameSettings.TRASH_WIDTH, GameSettings.TRASH_HEIGHT,
                     GameResources.TRASH_IMG_PATH,
-                    myGdxGame.world);
+                    GameSettings.TRASH_WIDTH, GameSettings.TRASH_HEIGHT,
+                    myGdxGame.world
+            );
             trashArray.add(trashObject);
-
         }
+
+        if (shipObject.needToShoot()) {
+            BulletObject laserBullet = new BulletObject(
+                    shipObject.getX(), shipObject.getY() + shipObject.height / 2,
+                    GameSettings.BULLET_WIDTH, GameSettings.BULLET_HEIGHT,
+                    GameResources.BULLET_IMG_PATH,
+                    myGdxGame.world
+            );
+            bulletArray.add(laserBullet);
+        }
+
         updateTrash();
 
         draw();
@@ -88,5 +103,13 @@ public class GameScreen extends ScreenAdapter {
                     trashArray.remove(i--);
                 }
             }
+        }
+        private void updateBullets(){
+        for (int i = 0; i < bulletArray.size(); i ++){
+            if (!bulletArray.get(i).hasToBeDestroyed()){
+                myGdxGame.world.destroyBody(bulletArray.get(i).body);
+                bulletArray.remove(i --);
+            }
+        }
         }
 }

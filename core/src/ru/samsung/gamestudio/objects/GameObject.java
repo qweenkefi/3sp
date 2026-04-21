@@ -12,13 +12,19 @@ public class GameObject {
     Texture texture;
     public int width;
     public int height;
+    public short cBits;
 
-    GameObject(String texturePath, int width, int height,int x, int y, World world){
+    GameObject(String texturePath, int width, int height,int x, int y, short cBits, World world){
         this.width = width;
         this.height = height;
+        this.cBits = cBits;
 
         texture = new Texture(texturePath);
         body = createBody(x, y, world);
+    }
+
+    public void hit(){
+
     }
 
     public int getX() {
@@ -46,9 +52,11 @@ public class GameObject {
         circleShape.setRadius(Math.max(width, height) * SCALE / 2f);
 
         FixtureDef fixtureDef = new FixtureDef();
+        fixtureDef.filter.categoryBits = cBits;
         fixtureDef.shape = circleShape;
         fixtureDef.density = 0.1f;
         fixtureDef.friction = 1f;
+        fixture.setUserData(this);
 
         body.createFixture(fixtureDef);
         circleShape.dispose();
