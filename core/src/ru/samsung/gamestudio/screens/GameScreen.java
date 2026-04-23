@@ -7,10 +7,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.utils.ScreenUtils;
-import ru.samsung.gamestudio.GameResources;
-import ru.samsung.gamestudio.GameSession;
-import ru.samsung.gamestudio.GameSettings;
-import ru.samsung.gamestudio.MyGdxGame;
+import ru.samsung.gamestudio.*;
 import ru.samsung.gamestudio.objects.BulletObject;
 import ru.samsung.gamestudio.objects.ShipObject;
 import ru.samsung.gamestudio.objects.TrashObject;
@@ -28,12 +25,19 @@ public class GameScreen extends ScreenAdapter {
     MyGdxGame myGdxGame;
     ShipObject shipObject;
     GameSession gameSession;
+    ContactManager contactManager;
+    MovingBackgroundView backgroundView;
+    ImageView topBlackoutView;
+    LiveView liveView;
 
     public GameScreen(MyGdxGame myGdxGame) {
         this.myGdxGame = myGdxGame;
         gameSession = new GameSession();
         trashArray = new ArrayList<>();
         bulletArray = new ArrayList<>();
+        contactManager = new ContactManager(myGdxGame.world);
+        backgroundView = new MovingBackgroundView(GameResources.BACKGROUND_IMG_PATH);
+        topBlackoutView = new ImageView(0, 1180, GameResources.BLACKOUT_TOP_PATH);
 
         shipObject = new ShipObject(
                 GameSettings.SCREEN_WIDTH/ 2, 150,
@@ -50,6 +54,10 @@ public class GameScreen extends ScreenAdapter {
 
     @Override
     public void render(float delta) {
+        backgroundView.move();
+        if (!shipObject.isAlive()){
+            System.out.println("Game over");
+        }
 
 
             myGdxGame.stepWorld();
@@ -77,6 +85,8 @@ public class GameScreen extends ScreenAdapter {
         updateTrash();
 
         draw();
+
+        liveView.setLeftLives(shipObject.getLiveLeft());
     }
 
     private void handleInput() {
@@ -92,13 +102,17 @@ public class GameScreen extends ScreenAdapter {
         ScreenUtils.clear(Color.CLEAR);
 
         myGdxGame.batch.begin();
-        shipObject.draw(myGdxGame.batch);
+        backgroundView.draw(myGdxGame.batch);
         for (TrashObject trash : trashArray) trash.draw(myGdxGame.batch);
+        shipObject.draw(myGdxGame.batch);
+        for (BulletObject bullet : bulletArray) bullet.draw(myGdxGame.batch);
+        topBlackoutView.draw(myGdxGame.batch);
+        liveView.draw(myGdxGame.batch);
         myGdxGame.batch.end();
     }
         private void updateTrash() {
             for (int i = 0; i < trashArray.size(); i++) {
-                if (!trashArray.get(i).isInFrame()) {
+                if (!trashArray.get(i).isInFrame() || !trashArray.get(i).isAlive()){
                     myGdxGame.world.destroyBody(trashArray.get(i).body);
                     trashArray.remove(i--);
                 }

@@ -56,9 +56,9 @@ public class GameObject {
         fixtureDef.shape = circleShape;
         fixtureDef.density = 0.1f;
         fixtureDef.friction = 1f;
-        fixture.setUserData(this);
 
-        body.createFixture(fixtureDef);
+        Fixture fixture = body.createFixture(fixtureDef);
+        fixture.setUserData(this);
         circleShape.dispose();
         body.setTransform(x * SCALE, y * SCALE, 0);
         return body;

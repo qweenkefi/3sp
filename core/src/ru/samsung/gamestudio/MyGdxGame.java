@@ -53,15 +53,6 @@ public class MyGdxGame extends Game {
 
 
 	@Override
-	public void render () {
-		ScreenUtils.clear(1, 0, 0, 1);
-		batch.begin();
-
-
-		batch.end();
-	}
-	
-	@Override
 	public void dispose () {
 		batch.dispose();
 

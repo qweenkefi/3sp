@@ -1,14 +1,11 @@
 package ru.samsung.gamestudio.objects;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.TimeUtils;
 import ru.samsung.gamestudio.GameSettings;
-
-import java.util.Vector;
 
 public class ShipObject extends GameObject {
     int livesLeft;
@@ -62,6 +59,11 @@ public class ShipObject extends GameObject {
     }
     public boolean isAlive(){
         return livesLeft > 0;
+    }
+
+    public int getLiveLeft() {
+
+        return 0;
     }
 }
 
