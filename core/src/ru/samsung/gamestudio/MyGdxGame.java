@@ -14,6 +14,7 @@ import com.badlogic.gdx.physics.box2d.Box2D;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.ScreenUtils;
 import ru.samsung.gamestudio.screens.GameScreen;
+import ru.samsung.gamestudio.screens.MenuScreen;
 
 import static java.awt.Color.WHITE;
 import static ru.samsung.gamestudio.GameResources.FONT_PATH;
@@ -22,11 +23,14 @@ import static ru.samsung.gamestudio.GameSettings.*;
 public class MyGdxGame extends Game {
 	public SpriteBatch batch;
 	public OrthographicCamera camera;
-	public GameScreen gamescreen;
+	public GameScreen gameScreen;
 	public World world;
 	float accumulator = 0;
 	public Vector3 touch;
 	public BitmapFont commonWhiteFont;
+	public BitmapFont largeWhiteFont;
+	public BitmapFont commonBlackFont;
+	public MenuScreen menuScreen;
 
 
 	
@@ -37,12 +41,15 @@ public class MyGdxGame extends Game {
 		batch = new SpriteBatch();
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, GameSettings.SCREEN_WIDTH, GameSettings.SCREEN_HEIGHT);
-		commonWhiteFont = FontBuilder.*generate*(24, Color.*WHITE*, GameResources.*FONT_PATH*);
+		commonWhiteFont = FontBuilder.generate(24, Color.WHITE, GameResources.FONT_PATH);
+		commonBlackFont = FontBuilder.generate(24, Color.BLACK, GameResources.FONT_PATH);
+		largeWhiteFont = FontBuilder.generate(48, Color.WHITE, GameResources.FONT_PATH);
 
 
 
-		gamescreen = new GameScreen(this);
-		setScreen(gamescreen);
+		gameScreen = new GameScreen(this);
+		menuScreen = new MenuScreen(this);
+		setScreen(menuScreen);
 
 
 	}

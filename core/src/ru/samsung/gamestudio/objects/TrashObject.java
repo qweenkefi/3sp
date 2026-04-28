@@ -11,10 +11,10 @@ public class TrashObject extends GameObject {
     private static final int paddingHorizontal = 30;
 
     public TrashObject(String texturePath, int width, int height, World world) {
-        super(texturePath,
+        super(texturePath,  width, height,
                 width / 2 + paddingHorizontal + (new Random()).nextInt((GameSettings.SCREEN_WIDTH - 2 * paddingHorizontal - width)),
                 GameSettings.SCREEN_HEIGHT + height / 2,
-                width, height,
+
                 GameSettings.TRASH_BIT,
                 world);
         body.setLinearVelocity(new Vector2(0, -GameSettings.TRASH_VELOCITY));

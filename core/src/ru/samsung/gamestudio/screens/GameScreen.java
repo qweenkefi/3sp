@@ -1,21 +1,17 @@
 package ru.samsung.gamestudio.screens;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.utils.ScreenUtils;
 import ru.samsung.gamestudio.*;
+import ru.samsung.gamestudio.managers.ContactManager;
 import ru.samsung.gamestudio.objects.BulletObject;
 import ru.samsung.gamestudio.objects.ShipObject;
 import ru.samsung.gamestudio.objects.TrashObject;
 
 import java.util.ArrayList;
-import java.util.Vector;
-
-import static com.badlogic.gdx.scenes.scene2d.utils.TiledDrawable.draw;
 
 public class GameScreen extends ScreenAdapter {
     ArrayList<TrashObject> trashArray;
@@ -32,12 +28,20 @@ public class GameScreen extends ScreenAdapter {
     TextView scoreTextView;
     ButtonView pauseButton;
 
+    ImageView fullBlackoutView;
+    TextView pauseTextView;
+    ButtonView homeButton;
+    ButtonView continueButton;
+
     public GameScreen(MyGdxGame myGdxGame) {
         this.myGdxGame = myGdxGame;
         gameSession = new GameSession();
+
         trashArray = new ArrayList<>();
         bulletArray = new ArrayList<>();
+
         contactManager = new ContactManager(myGdxGame.world);
+
         backgroundView = new MovingBackgroundView(GameResources.BACKGROUND_IMG_PATH);
         topBlackoutView = new ImageView(0, 1180, GameResources.BLACKOUT_TOP_PATH);
         liveView = new LiveView(305    , 1215, GameResources.LIVE_IMG_PATH);
@@ -50,10 +54,28 @@ public class GameScreen extends ScreenAdapter {
                 GameResources.SHIP_IMG_PATH,
                 myGdxGame.world
         );
+        fullBlackoutView = new ImageView(0, 0, GameResources.BLACKOUT_FULL_IMG_PATH);
+        pauseTextView = new TextView(myGdxGame.largeWhiteFont, 282, 842, "Pause");
+        homeButton = new ButtonView(
+                138, 695,
+                200, 70,
+                myGdxGame.commonBlackFont,
+                GameResources.BUTTON_SHORT_BG_IMG_PATH,
+                "Home"
+        );
+        continueButton = new ButtonView(
+                393, 695,
+                200, 70,
+                myGdxGame.commonBlackFont,
+                GameResources.BUTTON_SHORT_BG_IMG_PATH,
+                "Continue"
+        );
+
+
     }
 
     public void show(){
-        gameSession.startGame();
+     restartGame();
 
     }
 
@@ -85,12 +107,13 @@ public class GameScreen extends ScreenAdapter {
                     myGdxGame.world
             );
             bulletArray.add(laserBullet);
-            scoreTextView.setText("Score: " + 100);
 
 
         }
+        scoreTextView.setText("Score: " + 100);
 
         updateTrash();
+
 
         draw();
 
@@ -100,9 +123,29 @@ public class GameScreen extends ScreenAdapter {
     private void handleInput() {
         if (Gdx.input.isTouched()) {
             myGdxGame.touch = myGdxGame.camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
-            shipObject.move(myGdxGame.touch);
+            switch (gameSession.state) {
+                case PLAYING:
+                    if (pauseButton.isHit(myGdxGame.touch.x, myGdxGame.touch.y)) {
+                        gameSession.pauseGame();
+                    }
+                    shipObject.move(myGdxGame.touch);
+                    break;
+
+                case PAUSED:
+                    if (continueButton.isHit(myGdxGame.touch.x, myGdxGame.touch.y)) {
+                        gameSession.resumeGame();
+                    }
+                    if (homeButton.isHit(myGdxGame.touch.x, myGdxGame.touch.y)) {
+                        myGdxGame.setScreen(myGdxGame.menuScreen);
+                    }
+                    break;
+            }
+
+
+
         }
     }
+
 
     private void draw() {
         myGdxGame.camera.update();
@@ -118,6 +161,14 @@ public class GameScreen extends ScreenAdapter {
         scoreTextView.draw(myGdxGame.batch);
         liveView.draw(myGdxGame.batch);
         pauseButton.draw(myGdxGame.batch);
+
+        if (gameSession.state == GameState.PAUSED) {
+            fullBlackoutView.draw(myGdxGame.batch);
+            pauseTextView.draw(myGdxGame.batch);
+            homeButton.draw(myGdxGame.batch);
+            continueButton.draw(myGdxGame.batch);
+        }
+
         myGdxGame.batch.end();
     }
         private void updateTrash() {
@@ -136,4 +187,24 @@ public class GameScreen extends ScreenAdapter {
             }
         }
         }
+    private void restartGame() {
+
+        for (int i = 0; i < trashArray.size(); i++) {
+            myGdxGame.world.destroyBody(trashArray.get(i).body);
+            trashArray.remove(i--);
+        }
+
+        if (shipObject != null) {
+            myGdxGame.world.destroyBody(shipObject.body);
+        }
+        shipObject = new ShipObject(
+                GameSettings.SCREEN_WIDTH / 2, 150,
+                GameSettings.SHIP_WIDTH, GameSettings.SHIP_HEIGHT,
+                GameResources.SHIP_IMG_PATH,
+                myGdxGame.world
+        );
+
+        bulletArray.clear();
+        gameSession.startGame();
+    }
 }

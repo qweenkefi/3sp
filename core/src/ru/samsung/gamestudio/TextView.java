@@ -31,7 +31,7 @@ public class TextView extends View{
 
     @Override
     public void draw(SpriteBatch batch) {
-        font.draw();
+        font.draw(batch, text, x, y);
     }
 
     @Override

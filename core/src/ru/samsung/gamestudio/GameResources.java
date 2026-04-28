@@ -7,8 +7,13 @@ public class GameResources {
     public static final String BACKGROUND_IMG_PATH = "textures/background.png";
     public static final String BLACKOUT_TOP_PATH = "textures/blackout_top.png";
     public static final String BLACKOUT_MIDDLE_PATH = "textures/blackout_middle.png";
-    public static final String BLACKOUT_FULL_PATH = "textures/blackout_full.png";
+    public static final String BLACKOUT_FULL_IMG_PATH = "textures/blackout_full.png";
     public static final String LIVE_IMG_PATH = "textures/life.png";
     public static final String PAUSE_IMG_PATH = "textures/pause_icon.png";
+    public static final String BUTTON_SHORT_BG_IMG_PATH = "textures/button_background_short.png";
+    public static final String BUTTON_LONG_BG_IMG_PATH = "textures/button_background_long.png";
     public static final String FONT_PATH = "textures/fonts/ofont.ru_Montserrat.ttf";
+    BACKGROUND_MUSIC_PATH
+    SHOOT_SOUND_PATH
+    DESTROY_SOUND_PATH
 }
