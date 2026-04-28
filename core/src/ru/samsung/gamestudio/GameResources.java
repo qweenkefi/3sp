@@ -9,4 +9,6 @@ public class GameResources {
     public static final String BLACKOUT_MIDDLE_PATH = "textures/blackout_middle.png";
     public static final String BLACKOUT_FULL_PATH = "textures/blackout_full.png";
     public static final String LIVE_IMG_PATH = "textures/life.png";
+    public static final String PAUSE_IMG_PATH = "textures/pause_icon.png";
+    public static final String FONT_PATH = "textures/fonts/ofont.ru_Montserrat.ttf";
 }

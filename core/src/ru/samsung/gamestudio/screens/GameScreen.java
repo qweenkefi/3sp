@@ -29,6 +29,8 @@ public class GameScreen extends ScreenAdapter {
     MovingBackgroundView backgroundView;
     ImageView topBlackoutView;
     LiveView liveView;
+    TextView scoreTextView;
+    ButtonView pauseButton;
 
     public GameScreen(MyGdxGame myGdxGame) {
         this.myGdxGame = myGdxGame;
@@ -38,6 +40,9 @@ public class GameScreen extends ScreenAdapter {
         contactManager = new ContactManager(myGdxGame.world);
         backgroundView = new MovingBackgroundView(GameResources.BACKGROUND_IMG_PATH);
         topBlackoutView = new ImageView(0, 1180, GameResources.BLACKOUT_TOP_PATH);
+        liveView = new LiveView(305    , 1215, GameResources.LIVE_IMG_PATH);
+        scoreTextView = new TextView(myGdxGame.commonWhiteFont, 50, 1215);
+        pauseButton = new ButtonView(605, 1200, 46, 54, GameResources.PAUSE_IMG_PATH);
 
         shipObject = new ShipObject(
                 GameSettings.SCREEN_WIDTH/ 2, 150,
@@ -80,6 +85,9 @@ public class GameScreen extends ScreenAdapter {
                     myGdxGame.world
             );
             bulletArray.add(laserBullet);
+            scoreTextView.setText("Score: " + 100);
+
+
         }
 
         updateTrash();
@@ -107,7 +115,9 @@ public class GameScreen extends ScreenAdapter {
         shipObject.draw(myGdxGame.batch);
         for (BulletObject bullet : bulletArray) bullet.draw(myGdxGame.batch);
         topBlackoutView.draw(myGdxGame.batch);
+        scoreTextView.draw(myGdxGame.batch);
         liveView.draw(myGdxGame.batch);
+        pauseButton.draw(myGdxGame.batch);
         myGdxGame.batch.end();
     }
         private void updateTrash() {
