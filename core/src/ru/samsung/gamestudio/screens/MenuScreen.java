@@ -46,6 +46,7 @@ public class MenuScreen extends ScreenAdapter {
 
         myGdxGame.batch.end();
     }
+
     private void handleInput() {
         if (Gdx.input.justTouched()) {
             myGdxGame.touch = myGdxGame.camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
@@ -57,6 +58,6 @@ public class MenuScreen extends ScreenAdapter {
                 Gdx.app.exit();
             }
             if (settingsButtonView.isHit(myGdxGame.touch.x, myGdxGame.touch.y)) {
-                System.out.println("Go to settings Screen");
+                myGdxGame.setScreen(myGdxGame.settingsScreen);
             }}}
 }

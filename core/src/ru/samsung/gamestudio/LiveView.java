@@ -7,7 +7,7 @@ public class LiveView extends View{
     String text;
     Texture texture;
     int leftLives;
-    int livePadding;
+    int livePadding = 6;
     public LiveView(float x, float y, String liveImgPath) {
         super(x, y);
         texture = new Texture(GameResources.LIVE_IMG_PATH);

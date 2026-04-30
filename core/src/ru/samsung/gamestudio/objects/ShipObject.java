@@ -9,7 +9,7 @@ import ru.samsung.gamestudio.GameSettings;
 
 public class ShipObject extends GameObject {
     int livesLeft;
-    long lastShotTime;
+    long lastShotTime = 0;
     public ShipObject(int x, int y, int width, int height, String texturePath, World world) {
         super(texturePath, x, y, width, height, GameSettings.SHIP_BIT, world);
         body.setLinearDamping(10);
@@ -46,7 +46,7 @@ public class ShipObject extends GameObject {
     }
 
     public boolean needToShoot(){
-        if(lastShotTime - TimeUtils.millis() >= GameSettings.SHOOTING_COOL_DOWN){
+        if(-lastShotTime + TimeUtils.millis() >= GameSettings.SHOOTING_COOL_DOWN){
             lastShotTime = TimeUtils.millis();
             return true;
         }
@@ -63,9 +63,8 @@ public class ShipObject extends GameObject {
 
     public int getLiveLeft() {
 
-        return 0;
+        return livesLeft;
     }
 }
-
 
 

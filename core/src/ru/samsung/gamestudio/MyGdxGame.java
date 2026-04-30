@@ -13,8 +13,10 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Box2D;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.ScreenUtils;
+import ru.samsung.gamestudio.managers.AudioManager;
 import ru.samsung.gamestudio.screens.GameScreen;
 import ru.samsung.gamestudio.screens.MenuScreen;
+import ru.samsung.gamestudio.screens.SettingsScreen;
 
 import static java.awt.Color.WHITE;
 import static ru.samsung.gamestudio.GameResources.FONT_PATH;
@@ -31,6 +33,8 @@ public class MyGdxGame extends Game {
 	public BitmapFont largeWhiteFont;
 	public BitmapFont commonBlackFont;
 	public MenuScreen menuScreen;
+	public AudioManager audioManager;
+	public SettingsScreen settingsScreen;
 
 
 	
@@ -45,10 +49,11 @@ public class MyGdxGame extends Game {
 		commonBlackFont = FontBuilder.generate(24, Color.BLACK, GameResources.FONT_PATH);
 		largeWhiteFont = FontBuilder.generate(48, Color.WHITE, GameResources.FONT_PATH);
 
-
+		audioManager = new AudioManager();
 
 		gameScreen = new GameScreen(this);
 		menuScreen = new MenuScreen(this);
+		settingsScreen = new SettingsScreen(this);
 		setScreen(menuScreen);
 
 

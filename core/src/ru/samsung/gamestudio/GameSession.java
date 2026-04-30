@@ -4,12 +4,24 @@ import com.badlogic.gdx.utils.TimeUtils;
 import ru.samsung.gamestudio.screens.GameState;
 
 public class GameSession {
+    private int score;
+    int destructedTrashNumber;
     public GameState state;
     long nextTrashSpawnTime;
     long sessionStartTime;
     long pauseStartTime;
+    public void destructionRegistration() {
+        destructedTrashNumber += 1;
+    }
+    public void updateScore() {
+        score = (int) (TimeUtils.millis() - sessionStartTime) / 100 + destructedTrashNumber * 100;
+    }
+    public int getScore() {
+        return score;
+    }
 
     public GameSession(){
+
 
     }
 

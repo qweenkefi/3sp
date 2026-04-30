@@ -44,12 +44,12 @@ public class GameScreen extends ScreenAdapter {
 
         backgroundView = new MovingBackgroundView(GameResources.BACKGROUND_IMG_PATH);
         topBlackoutView = new ImageView(0, 1180, GameResources.BLACKOUT_TOP_PATH);
-        liveView = new LiveView(305    , 1215, GameResources.LIVE_IMG_PATH);
+        liveView = new LiveView(305, 1215, GameResources.LIVE_IMG_PATH);
         scoreTextView = new TextView(myGdxGame.commonWhiteFont, 50, 1215);
         pauseButton = new ButtonView(605, 1200, 46, 54, GameResources.PAUSE_IMG_PATH);
 
         shipObject = new ShipObject(
-                GameSettings.SCREEN_WIDTH/ 2, 150,
+                GameSettings.SCREEN_WIDTH / 2, 150,
                 GameSettings.SHIP_WIDTH, GameSettings.SHIP_HEIGHT,
                 GameResources.SHIP_IMG_PATH,
                 myGdxGame.world
@@ -74,51 +74,55 @@ public class GameScreen extends ScreenAdapter {
 
     }
 
-    public void show(){
-     restartGame();
+    public void show() {
+        restartGame();
 
     }
 
     @Override
     public void render(float delta) {
-        backgroundView.move();
-        if (!shipObject.isAlive()){
-            System.out.println("Game over");
-        }
+        handleInput();
+        if (myGdxGame.audioManager.isSoundOn) myGdxGame.audioManager.shootSound.play();
+
+        if (gameSession.state == GameState.PLAYING) {
+            if (gameSession.shouldSpawnTrash()) {
+                TrashObject trashObject = new TrashObject(
+                        GameResources.TRASH_IMG_PATH,
+                        GameSettings.TRASH_WIDTH, GameSettings.TRASH_HEIGHT,
+                        myGdxGame.world
+                );
+                trashArray.add(trashObject);
+            }
+            if (shipObject.needToShoot()) {
+                BulletObject laserBullet = new BulletObject(
+                        shipObject.getX(), shipObject.getY() + shipObject.height / 2,
+                        GameSettings.BULLET_WIDTH, GameSettings.BULLET_HEIGHT,
+                        GameResources.BULLET_IMG_PATH,
+                        myGdxGame.world
+                );
+                bulletArray.add(laserBullet);
+                myGdxGame.audioManager.shootSound.play();
 
 
+            }
+
+            updateBullets();
+            updateTrash();
+
+            if (!shipObject.isAlive()) {
+                System.out.println("Game over");
+            }
+            backgroundView.move();
+            gameSession.updateScore();
+            scoreTextView.setText("Score: " + gameSession.getScore());
+            liveView.setLeftLives(shipObject.getLiveLeft());
             myGdxGame.stepWorld();
-            handleInput();
-
-        if (gameSession.shouldSpawnTrash()) {
-            TrashObject trashObject = new TrashObject(
-                    GameResources.TRASH_IMG_PATH,
-                    GameSettings.TRASH_WIDTH, GameSettings.TRASH_HEIGHT,
-                    myGdxGame.world
-            );
-            trashArray.add(trashObject);
         }
-
-        if (shipObject.needToShoot()) {
-            BulletObject laserBullet = new BulletObject(
-                    shipObject.getX(), shipObject.getY() + shipObject.height / 2,
-                    GameSettings.BULLET_WIDTH, GameSettings.BULLET_HEIGHT,
-                    GameResources.BULLET_IMG_PATH,
-                    myGdxGame.world
-            );
-            bulletArray.add(laserBullet);
-
-
-        }
-        scoreTextView.setText("Score: " + 100);
-
-        updateTrash();
-
-
         draw();
 
-        liveView.setLeftLives(shipObject.getLiveLeft());
+
     }
+
 
     private void handleInput() {
         if (Gdx.input.isTouched()) {
@@ -140,7 +144,6 @@ public class GameScreen extends ScreenAdapter {
                     }
                     break;
             }
-
 
 
         }
@@ -171,22 +174,32 @@ public class GameScreen extends ScreenAdapter {
 
         myGdxGame.batch.end();
     }
-        private void updateTrash() {
-            for (int i = 0; i < trashArray.size(); i++) {
-                if (!trashArray.get(i).isInFrame() || !trashArray.get(i).isAlive()){
-                    myGdxGame.world.destroyBody(trashArray.get(i).body);
-                    trashArray.remove(i--);
-                }
+
+    private void updateTrash() {
+        for (int i = 0; i < trashArray.size(); i++) {
+            boolean hasToBeDestroyed = !trashArray.get(i).isAlive() || !trashArray.get(i).isInFrame();
+            if (!trashArray.get(i).isAlive()) {
+                gameSession.destructionRegistration();
+                if (myGdxGame.audioManager.isSoundOn) myGdxGame.audioManager.explosionSound.play(0.2f);
+            }
+            if (hasToBeDestroyed) {
+                myGdxGame.world.destroyBody(trashArray.get(i).body);
+                trashArray.remove(i--);
+            }
+            if (myGdxGame.audioManager.isSoundOn) myGdxGame.audioManager.explosionSound.play(0.2f);
+        }
+    }
+
+    private void updateBullets() {
+        for (int i = 0; i < bulletArray.size(); i++) {
+            BulletObject bulletObject = bulletArray.get(i);
+            if (bulletObject.hasToBeDestroyed()) {
+                myGdxGame.world.destroyBody(bulletObject.body);
+                bulletArray.remove(i--);
             }
         }
-        private void updateBullets(){
-        for (int i = 0; i < bulletArray.size(); i ++){
-            if (!bulletArray.get(i).hasToBeDestroyed()){
-                myGdxGame.world.destroyBody(bulletArray.get(i).body);
-                bulletArray.remove(i --);
-            }
-        }
-        }
+    }
+
     private void restartGame() {
 
         for (int i = 0; i < trashArray.size(); i++) {
