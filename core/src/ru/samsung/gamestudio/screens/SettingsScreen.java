@@ -8,6 +8,8 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import ru.samsung.gamestudio.*;
 import ru.samsung.gamestudio.managers.MemoryManager;
 
+import java.util.ArrayList;
+
 public class SettingsScreen extends ScreenAdapter {
     MyGdxGame myGdxGame;
     MovingBackgroundView backgroundView;
@@ -17,6 +19,7 @@ public class SettingsScreen extends ScreenAdapter {
     TextView musicSettingView;
     TextView soundSettingView;
     TextView clearSettingView;
+
     private String translateStateToText(boolean state) {
         return state ? "ON" : "OFF";
     }
@@ -25,9 +28,20 @@ public class SettingsScreen extends ScreenAdapter {
         backgroundView = new MovingBackgroundView(GameResources.BACKGROUND_IMG_PATH);
         titleTextView = new TextView(myGdxGame.largeWhiteFont, 256, 956, "Settings");
         blackoutImageView = new ImageView(85, 365, GameResources.BLACKOUT_MIDDLE_IMG_PATH);
-        musicSettingView = new TextView(myGdxGame.commonWhiteFont, 173, 717, "music: " + "ON");
-        soundSettingView = new TextView(myGdxGame.commonWhiteFont, 173, 658, "sound: " + "ON");
         clearSettingView = new TextView(myGdxGame.commonWhiteFont, 173, 599, "clear records");
+        musicSettingView = new TextView(
+                myGdxGame.commonWhiteFont,
+                173, 717,
+                "music: " + translateStateToText(MemoryManager.loadIsMusicOn())
+        );
+
+        soundSettingView = new TextView(
+                myGdxGame.commonWhiteFont,
+                173, 658,
+                "sound: " + translateStateToText(MemoryManager.loadIsSoundOn())
+        );
+
+
         returnButton = new ButtonView(
                 280, 447,
                 160, 70,
@@ -61,9 +75,6 @@ public class SettingsScreen extends ScreenAdapter {
             if (returnButton.isHit(myGdxGame.touch.x, myGdxGame.touch.y)) {
                 myGdxGame.setScreen(myGdxGame.menuScreen);
             }
-            if (clearSettingView.isHit(myGdxGame.touch.x, myGdxGame.touch.y)) {
-                clearSettingView.setText("clear records (cleared)");
-            }
             if (musicSettingView.isHit(myGdxGame.touch.x, myGdxGame.touch.y)) {
                 MemoryManager.saveMusicSettings(!MemoryManager.loadIsMusicOn());
                 musicSettingView.setText("music: " + translateStateToText(MemoryManager.loadIsMusicOn()));
@@ -74,8 +85,11 @@ public class SettingsScreen extends ScreenAdapter {
                 soundSettingView.setText("sound: " + translateStateToText(MemoryManager.loadIsSoundOn()));
                 myGdxGame.audioManager.updateSoundFlag();
             }
+            if (clearSettingView.isHit(myGdxGame.touch.x, myGdxGame.touch.y)) {
+                MemoryManager.saveTableOfRecords(new ArrayList<>());
+                clearSettingView.setText("clear records (cleared)");
         }
-    }
+    } }
 
     @Override
     public void dispose() {

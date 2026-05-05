@@ -1,7 +1,10 @@
 package ru.samsung.gamestudio;
 
 import com.badlogic.gdx.utils.TimeUtils;
+import ru.samsung.gamestudio.managers.MemoryManager;
 import ru.samsung.gamestudio.screens.GameState;
+
+import java.util.ArrayList;
 
 public class GameSession {
     private int score;
@@ -10,6 +13,7 @@ public class GameSession {
     long nextTrashSpawnTime;
     long sessionStartTime;
     long pauseStartTime;
+
     public void destructionRegistration() {
         destructedTrashNumber += 1;
     }
@@ -46,6 +50,21 @@ public class GameSession {
     public void resumeGame(){
         state = GameState.PLAYING;
         sessionStartTime += TimeUtils.millis() - pauseStartTime;
+    }
+    public void endGame() {
+        updateScore();
+        state = GameState.ENDED;
+        ArrayList<Integer> recordsTable = MemoryManager.loadRecordsTable();
+        if (recordsTable == null) {
+            recordsTable = new ArrayList<>();
+        }
+        int foundIdx = 0;
+        for (; foundIdx < recordsTable.size(); foundIdx++) {
+            if (recordsTable.get(foundIdx) < getScore()) break;
+        }
+        recordsTable.add(foundIdx, getScore());
+        MemoryManager.saveTableOfRecords(recordsTable);
+
     }
     public void pauseGame(){
         state = GameState.PAUSED;

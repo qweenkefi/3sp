@@ -5,8 +5,10 @@ import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.ScreenUtils;
+import components.RecordsListView;
 import ru.samsung.gamestudio.*;
 import ru.samsung.gamestudio.managers.ContactManager;
+import ru.samsung.gamestudio.managers.MemoryManager;
 import ru.samsung.gamestudio.objects.BulletObject;
 import ru.samsung.gamestudio.objects.ShipObject;
 import ru.samsung.gamestudio.objects.TrashObject;
@@ -26,7 +28,10 @@ public class GameScreen extends ScreenAdapter {
     ImageView topBlackoutView;
     LiveView liveView;
     TextView scoreTextView;
+    TextView recordsTextView;
+    ButtonView homeButton2;
     ButtonView pauseButton;
+    RecordsListView recordsListView;
 
     ImageView fullBlackoutView;
     TextView pauseTextView;
@@ -36,6 +41,18 @@ public class GameScreen extends ScreenAdapter {
     public GameScreen(MyGdxGame myGdxGame) {
         this.myGdxGame = myGdxGame;
         gameSession = new GameSession();
+
+        recordsListView = new RecordsListView(myGdxGame.commonWhiteFont, 690);
+        recordsTextView = new TextView(myGdxGame.largeWhiteFont, 206, 842, "Last records");
+        homeButton2 = new ButtonView(
+                280, 365,
+                160, 70,
+                myGdxGame.commonBlackFont,
+                GameResources.BUTTON_SHORT_BG_IMG_PATH,
+                "Home"
+        );
+
+
 
         trashArray = new ArrayList<>();
         bulletArray = new ArrayList<>();
@@ -101,7 +118,7 @@ public class GameScreen extends ScreenAdapter {
                         myGdxGame.world
                 );
                 bulletArray.add(laserBullet);
-                myGdxGame.audioManager.shootSound.play();
+                if (myGdxGame.audioManager.isSoundOn) myGdxGame.audioManager.shootSound.play();
 
 
             }
@@ -110,8 +127,11 @@ public class GameScreen extends ScreenAdapter {
             updateTrash();
 
             if (!shipObject.isAlive()) {
-                System.out.println("Game over");
+                gameSession.endGame();
+                recordsListView.setRecords(MemoryManager.loadRecordsTable());
             }
+
+
             backgroundView.move();
             gameSession.updateScore();
             scoreTextView.setText("Score: " + gameSession.getScore());
@@ -143,6 +163,11 @@ public class GameScreen extends ScreenAdapter {
                         myGdxGame.setScreen(myGdxGame.menuScreen);
                     }
                     break;
+                case ENDED:
+                    if (homeButton2.isHit(myGdxGame.touch.x, myGdxGame.touch.y)) {
+                        myGdxGame.setScreen(myGdxGame.menuScreen);
+                    }
+                    break;
             }
 
 
@@ -170,6 +195,13 @@ public class GameScreen extends ScreenAdapter {
             pauseTextView.draw(myGdxGame.batch);
             homeButton.draw(myGdxGame.batch);
             continueButton.draw(myGdxGame.batch);
+
+        }
+        else if (gameSession.state == GameState.ENDED) {
+            fullBlackoutView.draw(myGdxGame.batch);
+            recordsTextView.draw(myGdxGame.batch);
+            recordsListView.draw(myGdxGame.batch);
+            homeButton2.draw(myGdxGame.batch);
         }
 
         myGdxGame.batch.end();
