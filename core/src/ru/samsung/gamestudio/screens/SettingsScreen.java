@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.ScreenUtils;
 import ru.samsung.gamestudio.*;
 import ru.samsung.gamestudio.managers.MemoryManager;
+import ru.samsung.gamestudio.managers.SpeedManager;
 
 import java.util.ArrayList;
 
@@ -19,6 +20,8 @@ public class SettingsScreen extends ScreenAdapter {
     TextView musicSettingView;
     TextView soundSettingView;
     TextView clearSettingView;
+    TextView speedSettingView;
+    TextView downSpeedSettingView;
 
     private String translateStateToText(boolean state) {
         return state ? "ON" : "OFF";
@@ -26,18 +29,22 @@ public class SettingsScreen extends ScreenAdapter {
     public SettingsScreen(MyGdxGame myGdxGame){
         this.myGdxGame = myGdxGame;
         backgroundView = new MovingBackgroundView(GameResources.BACKGROUND_IMG_PATH);
+
+
+        speedSettingView = new TextView(myGdxGame.commonWhiteFont,173, 776, "Add ship force" );
+        downSpeedSettingView = new TextView(myGdxGame.commonWhiteFont,173,717, "Lower ship force");
         titleTextView = new TextView(myGdxGame.largeWhiteFont, 256, 956, "Settings");
         blackoutImageView = new ImageView(85, 365, GameResources.BLACKOUT_MIDDLE_IMG_PATH);
-        clearSettingView = new TextView(myGdxGame.commonWhiteFont, 173, 599, "clear records");
+        clearSettingView = new TextView(myGdxGame.commonWhiteFont, 173, 540, "clear records");
         musicSettingView = new TextView(
                 myGdxGame.commonWhiteFont,
-                173, 717,
+                173, 658,
                 "music: " + translateStateToText(MemoryManager.loadIsMusicOn())
         );
 
         soundSettingView = new TextView(
                 myGdxGame.commonWhiteFont,
-                173, 658,
+                173, 599,
                 "sound: " + translateStateToText(MemoryManager.loadIsSoundOn())
         );
 
@@ -64,6 +71,9 @@ public class SettingsScreen extends ScreenAdapter {
         returnButton.draw(myGdxGame.batch);
         musicSettingView.draw(myGdxGame.batch);
         soundSettingView.draw(myGdxGame.batch);
+        downSpeedSettingView.draw(myGdxGame.batch);
+
+        speedSettingView.draw(myGdxGame.batch);
         clearSettingView.draw(myGdxGame.batch);
 
         myGdxGame.batch.end();
@@ -88,7 +98,18 @@ public class SettingsScreen extends ScreenAdapter {
             if (clearSettingView.isHit(myGdxGame.touch.x, myGdxGame.touch.y)) {
                 MemoryManager.saveTableOfRecords(new ArrayList<>());
                 clearSettingView.setText("clear records (cleared)");
+
         }
+            if(speedSettingView.isHit(myGdxGame.touch.x, myGdxGame.touch.y)){
+                speedSettingView.setText("Add ship force(+5)");
+                SpeedManager.speedUp();
+
+            }
+            if(downSpeedSettingView.isHit(myGdxGame.touch.x, myGdxGame.touch.y)){
+                downSpeedSettingView.setText("Lower ship force(-5)");
+
+                SpeedManager.speedDown();
+            }
     } }
 
     @Override

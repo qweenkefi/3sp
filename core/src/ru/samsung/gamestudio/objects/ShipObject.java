@@ -6,10 +6,12 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.TimeUtils;
 import ru.samsung.gamestudio.GameSettings;
+import ru.samsung.gamestudio.managers.SpeedManager;
 
 public class ShipObject extends GameObject {
     int livesLeft;
     long lastShotTime = 0;
+
     public ShipObject(int x, int y, int width, int height, String texturePath, World world) {
         super(texturePath, x, y, width, height, GameSettings.SHIP_BIT, world);
         body.setLinearDamping(10);
@@ -35,18 +37,15 @@ public class ShipObject extends GameObject {
         putInFrame();
         super.draw(batch);
     }
+
     public void move(Vector3 vector3) {
-        float fx = (vector3.x - getX()) * GameSettings.SHIP_FORCE_RATIO;
-        float fy = (vector3.y - getY()) * GameSettings.SHIP_FORCE_RATIO;
-        body.applyForceToCenter(new Vector2(
-                        fx,
-                        fy),
-                true
-        );
+        float fx = (vector3.x - getX()) * SpeedManager.shipForceRatio;
+        float fy = (vector3.y - getY()) * SpeedManager.shipForceRatio;
+        body.applyForceToCenter(new Vector2(fx, fy), true);
     }
 
-    public boolean needToShoot(){
-        if(-lastShotTime + TimeUtils.millis() >= GameSettings.SHOOTING_COOL_DOWN){
+    public boolean needToShoot() {
+        if (-lastShotTime + TimeUtils.millis() >= GameSettings.SHOOTING_COOL_DOWN) {
             lastShotTime = TimeUtils.millis();
             return true;
         }
@@ -57,7 +56,8 @@ public class ShipObject extends GameObject {
     public void hit() {
         livesLeft -= 1;
     }
-    public boolean isAlive(){
+
+    public boolean isAlive() {
         return livesLeft > 0;
     }
 
@@ -65,6 +65,7 @@ public class ShipObject extends GameObject {
 
         return livesLeft;
     }
+
 }
 
 

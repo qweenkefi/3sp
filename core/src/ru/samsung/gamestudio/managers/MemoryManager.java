@@ -9,6 +9,8 @@ import java.util.ArrayList;
 public class MemoryManager {
     private static final Preferences preferences = Gdx.app.getPreferences("User saves");
 
+
+
     public static void saveSoundSettings(boolean isOn) {
         preferences.putBoolean("isSoundOn", isOn);
         preferences.flush();

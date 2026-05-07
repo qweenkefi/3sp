@@ -31,6 +31,7 @@ public class GameSession {
 
     public void startGame(){
         state = GameState.PLAYING;
+        score = 0;
         sessionStartTime = TimeUtils.millis();
         nextTrashSpawnTime = sessionStartTime + (long) (GameSettings.STARTING_TRASH_APPEARANCE_COOL_DOWN * getTrashPeriodCoolDown());
 

@@ -99,7 +99,6 @@ public class GameScreen extends ScreenAdapter {
     @Override
     public void render(float delta) {
         handleInput();
-        if (myGdxGame.audioManager.isSoundOn) myGdxGame.audioManager.shootSound.play();
 
         if (gameSession.state == GameState.PLAYING) {
             if (gameSession.shouldSpawnTrash()) {
@@ -125,6 +124,7 @@ public class GameScreen extends ScreenAdapter {
 
             updateBullets();
             updateTrash();
+
 
             if (!shipObject.isAlive()) {
                 gameSession.endGame();
@@ -218,7 +218,6 @@ public class GameScreen extends ScreenAdapter {
                 myGdxGame.world.destroyBody(trashArray.get(i).body);
                 trashArray.remove(i--);
             }
-            if (myGdxGame.audioManager.isSoundOn) myGdxGame.audioManager.explosionSound.play(0.2f);
         }
     }
 

@@ -17,7 +17,7 @@ public class RecordsListView extends TextView {
 
     public void setRecords(ArrayList<Integer> recordsList) {
         text = "";
-        int countOfRows = Math.min(recordsList.size(), 5);
+        int countOfRows = Math.min(recordsList.size(), 7);
         for (int i = 0; i < countOfRows; i++) {
             System.out.println(recordsList.get(i));
             text += (i + 1) + ". - " + recordsList.get(i) + "\n";
